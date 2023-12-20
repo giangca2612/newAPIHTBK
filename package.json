@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "proxy": "http://58.186.46.22:4567",
   "scripts": {
     "dev": "nodemon index.js"
   },
