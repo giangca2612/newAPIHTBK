@@ -14,6 +14,7 @@ const billRoutes = require('./routers/bill');
 
 const app = express();
 dotenv.config();
+app.use(cors({origin: true, credentials: true}));
 
 //mongoodb
 const db_conect = async () => {
@@ -21,7 +22,7 @@ const db_conect = async () => {
         await mongoose.connect(process.env.MONGO_DB_URL);
         console.log("monggo thanh cong");
     } catch (error) {
-        throw error;
+        console.log("connect faild" + error);
     }
 }
 //middleware
@@ -39,4 +40,6 @@ app.use('/api/bill', billRoutes);
 app.listen(4567, () => {
     db_conect()
     console.log(`sever chay post 4567`)
+    console.log(process.env.MONGO_DB_URL);
+    console.log(process.env.JWT_SECRET_KEY);
 })
