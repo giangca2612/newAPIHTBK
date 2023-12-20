@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+require('dotenv').config()
 
 //routes
 const usersRouter = require('./routers/users');
@@ -14,7 +15,15 @@ const billRoutes = require('./routers/bill');
 
 const app = express();
 dotenv.config();
-app.use(cors({origin: true, credentials: true}));
+
+// Cài đặt tùy chọn CORS trước khi sử dụng app
+const corsOptions = {
+    origin: 'http://localhost:4567', // Thay đổi thành địa chỉ của ứng dụng React Native của bạn
+    credentials: true,
+  };
+  app.use(cors(corsOptions));
+  
+const POST = process.env.PORT || 4567
 
 //mongoodb
 const db_conect = async () => {
@@ -22,7 +31,7 @@ const db_conect = async () => {
         await mongoose.connect(process.env.MONGO_DB_URL);
         console.log("monggo thanh cong");
     } catch (error) {
-        console.log("connect faild" + error);
+        //console.log("connect faild" + error);
     }
 }
 //middleware
@@ -37,9 +46,7 @@ app.use('/api/hoteldetail', hotelDetailRouter);
 app.use('/api/room', roomRouter);
 app.use('/api/bill', billRoutes);
 
-app.listen(4567, () => {
+app.listen(POST, () => {
     db_conect()
-    console.log(`sever chay post 4567`)
-    console.log(process.env.MONGO_DB_URL);
-    console.log(process.env.JWT_SECRET_KEY);
+    console.log(`sever chay post ${POST}`)
 })
