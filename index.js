@@ -55,6 +55,8 @@ app.use('/api/hoteldetail', hotelDetailRouter);
 app.use('/api/room', roomRouter);
 app.use('/api/bill', billRoutes);
 
+mongoose.set('strictQuery', true);
+
 app.listen(POST, () => {
     db_conect()
     console.log(`sever chay post ${POST}`)
