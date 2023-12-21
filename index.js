@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 require('dotenv').config()
+const path = require('path');
+
 
 //routes
 const usersRouter = require('./routers/users');
@@ -12,6 +14,7 @@ const hotelRouter = require('./routers/hotels');
 const hotelDetailRouter = require('./routers/hotelsdetail');
 const roomRouter = require('./routers/rooms');
 const billRoutes = require('./routers/bill');
+const indexRoutes = require('./routers/index');
 
 const app = express();
 dotenv.config();
@@ -39,6 +42,12 @@ app.use(cors())
 app.use(cookieParser())
 app.use(express.json())
 
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+// app.engine('handlebars', hbs.engine);
+app.set('view engine', 'hbs');
+
+app.use('/', indexRoutes);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/hotel', hotelRouter);
