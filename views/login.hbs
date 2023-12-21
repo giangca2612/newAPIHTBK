@@ -1,0 +1,73 @@
+<div class="page-wrapper">
+    <div class="page-content--bge5">
+        <div class="container">
+            <div class="login-wrap">
+                <div class="login-content">
+                    <div class="login-logo">
+                        <a href="#">
+                            <img width=40% src="/images/icon/logo.png" alt="CoolAdmin">
+                        </a>
+                    </div>
+                    <div class="login-form">
+                        <form action="" method="post" id="loginForm">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input class="au-input au-input--full" type="email" name="email" placeholder="email">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input class="au-input au-input--full" type="password" name="password"
+                                    placeholder="Password">
+                            </div>
+                            <!-- <button class="au-btn au-btn--block au-btn--green m-b-20" type="submit">sign in</button> -->
+                            <form action="" method="post" id="loginForm">
+                                <button style="margin-top: 15px;" class="au-btn au-btn--block au-btn--green m-b-20"
+                                    type="button" onclick="login()">Sign In</button>
+                            </form>
+                        </form>
+                        {{!-- <div class="register-link">
+                            <p>
+                                Don't you have account?
+                                <a href="#">Sign Up Here</a>
+                            </p>
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function login() {
+        {{!-- const email = document.getElementsByName('email')[0].value;
+        const password = document.getElementsByName('password')[0].value; --}}
+        window.location.href = 'table.html';
+
+        {
+            {
+                !-- try {
+                    const response = await $.ajax({
+                        url: 'http://localhost:3000/api/auth/login',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ email, password }),
+                        success: function (data) {
+                            // Handle successful login
+                            console.log('Đăng nhập thành công:', data);
+                            localStorage.setItem('access_token', data.access_token);
+                            window.location.href = 'table.html'; // Replace with your desired destination URL
+                        },
+                        error: function (error) {
+                            // Handle failed login
+                            console.error('Login failed', error);
+                            alert('Tài khoản hoặc mật khẩu không đúng');
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error during login:', error);
+                    alert('An unexpected error occurred. Please try again later.');
+                } --}
+        }
+    }
+</script>
