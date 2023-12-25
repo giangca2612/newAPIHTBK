@@ -25,7 +25,7 @@ exports.register = async (req, res, next) => {
     await newUser.save();
 
     // Gửi phản hồi cho người dùng.
-    res.status(200).send('User Has been Created');
+    res.status(200).json({ message: 'User has been created' });
   } catch (error) {
     // Xử lý lỗi.
     next(error);
