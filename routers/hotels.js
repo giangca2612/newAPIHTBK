@@ -32,7 +32,8 @@ router.delete('/rooms/:hotelId/:roomId', deleteRoom);
 
 //hien len form để sửa 
 // Updated route for fetching hotel details for editing
-router.get('/rooms/chitietht/:hotelId/:roomId', getHotelRoomsSua);
+// router.get('/rooms/chitietht/:hotelId/:roomId', getHotelRoomsSua);
+router.get('/rooms/chitietht/', getHotelRoomsSua);
 
 // Add the POST route for updating data
 router.put('/hotels/rooms/update/:hotelId/:roomId', updateRoomDetailsById);

@@ -208,11 +208,11 @@ const getHotelRooms = async (req, res, next) => {
 
 const getHotelRoomsSua = async (req, res, next) => {
     try {
-        const hotelId = req.params.hotelId;
-        const roomId = req.params.roomId;
+        // const hotelId = req.params.hotelId;
+        // const roomId = req.params.roomId;
 
         // Find the hotel by ID with populated rooms and hotelDetail
-        const hotel = await Hotel.findById(hotelId)
+        const hotel = await Hotel.find(hotelId)
             .populate({
                 path: 'rooms',
                 populate: {
@@ -295,5 +295,5 @@ module.exports = {
     getHotelRoomsSua,
     updateRoomDetailsById,
     getMostBookedRoomDetails,
-    deleteAllHotels
+    deleteAllHotels,
 };
