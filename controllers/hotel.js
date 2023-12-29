@@ -206,6 +206,34 @@ const getHotelRooms = async (req, res, next) => {
     }
 };
 
+const getHotelRoomsByHotelId = async (req, res, next) => {
+    try {
+        // const roomId = await Room.findById(req.params.id);
+        // Check if hotel exists
+        const hotel = await Hotel.findById(req.params.id);
+
+        if (!hotel) {
+            return res.status(404).json({ message: 'Hotel not found' });
+        }
+        // Get all rooms of the hotel, filter by room status
+        const rooms = await Hotel.findOne({ _id: req.params.id }).populate({
+            path: 'rooms',
+            match: { _id: req.params.roomId },
+            // populate: {
+            //     path: 'room',
+            // },
+        });
+
+        if (!rooms || rooms.length === 0) {
+            return res.status(404).json({ message: 'No rooms found with the specified status' });
+        }
+        res.status(200).json(rooms.rooms);
+          } catch (error) {
+        res.status(400);
+        next(error);
+    }
+};
+
 const getHotelRoomsSua = async (req, res, next) => {
     try {
         // const hotelId = req.params.hotelId;
@@ -296,4 +324,5 @@ module.exports = {
     updateRoomDetailsById,
     getMostBookedRoomDetails,
     deleteAllHotels,
+    getHotelRoomsByHotelId
 };
