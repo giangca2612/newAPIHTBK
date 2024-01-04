@@ -79,13 +79,12 @@ const searchHotels = async (req, res, next) => {
         if (queryType === 'phoneNumberHotel' && value) {
             // Convert the value to a number if it's a string
             query.phoneNumberHotel = isNaN(value) ? value : parseInt(value);
-        } else if (queryType === 'city' && value) {
-            query.hotelCity = value;
+        } else if (queryType === 'hotelCity' && value) {
+            // Modify the condition to perform a partial match
+            query.hotelCity = { $regex: new RegExp(value, 'i') }; // Case-insensitive partial search
         } else if (queryType === 'hotelName' && value) {
-            query.hotelName = { $regex: new RegExp(value, 'i') }; // Case-insensitive search
-        } else if (queryType === 'roomPrice' && value) {
-            // You may adjust the condition based on your specific requirements
-            query['rooms.roomPrice'] = { $lte: parseInt(value) };
+            // Modify the condition to perform a partial match
+            query.hotelName = { $regex: new RegExp(value, 'i') }; // Case-insensitive partial search
         } else {
             return res.status(400).json({ message: 'Invalid query type or value' });
         }
