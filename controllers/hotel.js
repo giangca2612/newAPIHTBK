@@ -77,21 +77,19 @@ const searchHotels = async (req, res, next) => {
         const query = {};
 
         if (queryType === 'phoneNumberHotel' && value) {
-            // Convert the value to a number if it's a string
             query.phoneNumberHotel = isNaN(value) ? value : parseInt(value);
         } else if (queryType === 'hotelCity' && value) {
-            // Modify the condition to perform a partial match
-            query.hotelCity = { $regex: new RegExp(value, 'i') }; // Case-insensitive partial search
+            query.hotelCity = { $regex: new RegExp(value, 'i') };
         } else if (queryType === 'hotelName' && value) {
-            // Modify the condition to perform a partial match
-            query.hotelName = { $regex: new RegExp(value, 'i') }; // Case-insensitive partial search
+            query.hotelName = { $regex: new RegExp(value, 'i') };
         } else {
             return res.status(400).json({ message: 'Invalid query type or value' });
         }
 
         console.log('Query:', query);
 
-        const hotels = await Hotel.find(query);
+        const hotels = await Hotel.find(query).populate('rooms'); // Populate the 'rooms' field
+
         res.status(200).json(hotels);
     } catch (error) {
         next(error);
