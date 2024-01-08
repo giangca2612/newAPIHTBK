@@ -40,6 +40,7 @@ router.put('/hotels/rooms/update/:hotelId/:roomId', updateRoomDetailsById);
 
 router.delete('/all/hotels',deleteAllHotels);
 
+//lay phong ra theo id
 router.get('/:id/rooms',getHotelRoomsByHotelId);
 
 module.exports = router;

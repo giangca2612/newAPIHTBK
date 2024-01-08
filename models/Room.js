@@ -24,7 +24,7 @@ const RoomSchema = new mongoose.Schema({
     //trang thai phong
     roomStatus: {
         type: String,
-        enum: ['phòng trống', 'phòng cho thuê'],
+        enum: ['phòng trống', 'phòng đã được thuê'],
     },
     
     
