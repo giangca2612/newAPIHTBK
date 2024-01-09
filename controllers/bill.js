@@ -2,16 +2,17 @@ const Bill = require('../models/Bill'); // Correct the import statement
 
 const createBill = async (req, res, next) => {
     try {
-        const { dateCheckin, dateCheckout, billInfo, billMonney, userID, paymentDetails } = req.body;
+        const { thongtinpp,billMonney,billInfo, startbill, hotelcitybill, dateCheckin, dateCheckout } = req.body;
 
         // Create a new Bill instance
         const newBill = new Bill({
+            thongtinpp,
+            billMonney,
+            billInfo,
+            startbill,
+            hotelcitybill,
             dateCheckin,
             dateCheckout,
-            billInfo,
-            billMonney,
-            userID,
-            paymentDetails,
         });
 
         const savedBill = await newBill.save();

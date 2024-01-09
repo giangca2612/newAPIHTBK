@@ -9,6 +9,10 @@ const BillSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
+    thongtinpp:{
+        type:String,
+    },
+    // tên roomtype
     billInfo: {
         type: String,
     },
@@ -31,7 +35,6 @@ const BillSchema = new mongoose.Schema({
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
     },
     paymentDetails: {
         dayStay: {
