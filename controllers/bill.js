@@ -32,6 +32,9 @@ const createBill = async (req, res, next) => {
         res.status(201).json(savedBill);
     } catch (error) {
         console.error('Error creating bill:', error);
+        // Log the detailed error message and status code
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
+        // Call next() to pass the error to the next middleware
         next(error);
     }
 };
