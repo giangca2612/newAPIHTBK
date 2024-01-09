@@ -1,32 +1,10 @@
-const { bill } = require('../models/Bill');
+const Bill = require('../models/Bill'); // Correct the import statement
 
 const createBill = async (req, res, next) => {
-    const newBill = new Bill(req.body);
-
     try {
+        const newBill = new Bill(req.body);
         const savedBill = await newBill.save();
         res.status(201).json(savedBill);
-    } catch (error) {
-        next(error);
-    }
-};
-
-// Update Bill by ID
-const updateBill = async (req, res, next) => {
-    const billId = req.params.id;
-
-    try {
-        const updatedBill = await Bill.findByIdAndUpdate(
-            billId,
-            req.body,
-            { new: true }
-        );
-
-        if (!updatedBill) {
-            return res.status(404).json({ message: 'Bill not found' });
-        }
-
-        res.status(200).json(updatedBill);
     } catch (error) {
         next(error);
     }
@@ -61,7 +39,6 @@ const getAllBills = async (req, res, next) => {
 
 module.exports = {
     createBill,
-    updateBill,
     deleteBill,
     getAllBills,
 };
