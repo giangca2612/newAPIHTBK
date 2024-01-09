@@ -11,12 +11,17 @@ const BillSchema = new mongoose.Schema({
     },
     billInfo: {
         type: String,
-        required: true,
     },
     imageHotelBill: {
         type: String,
     },
     hotelcitybill: {
+        type: String,
+    },
+    startbill:{
+        type: String,
+    },
+    namebillroom:{
         type: String,
     },
     billMonney: {
