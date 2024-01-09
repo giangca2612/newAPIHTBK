@@ -13,6 +13,10 @@ const createBill = async (req, res, next) => {
             dateCheckout
         } = req.body;
 
+        if (!thongtinpp || !billMonney || !imageHotelBill || !billInfo || !startbill || !hotelcitybill || !dateCheckin || !dateCheckout) {
+            return res.status(400).json({ error: 'Missing required fields in the request body.' });
+        }
+
         const newBill = new Bill({
             thongtinpp,
             billMonney,
@@ -27,10 +31,10 @@ const createBill = async (req, res, next) => {
         const savedBill = await newBill.save();
         res.status(201).json(savedBill);
     } catch (error) {
+        console.error('Error creating bill:', error);
         next(error);
     }
 };
-
 
 // Get Bill by ID
 const getBillById = async (req, res, next) => {
