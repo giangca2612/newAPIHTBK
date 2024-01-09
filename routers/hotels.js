@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { createHotel, getHotelRooms, getAllHotels, updateHotel, deleteHotel, getHotelById, searchHotels,
     getHotelDetails,
-    deleteRoom, getHotelRoomsSua, updateRoomDetailsById, getMostBookedRoomDetails, deleteAllHotels, getHotelRoomsByHotelId } = require("../controllers/hotel");
+    deleteRoom, getHotelRoomsSua, updateRoomDetailsById, getMostBookedRoomDetails, deleteAllHotels, getHotelRoomsByHotelId, hotelandroombyid } = require("../controllers/hotel");
 
 //Tìm kiếm khách sạn theo thành phố và các thông số khác:
 // Search hotels based on criteria
@@ -42,5 +42,7 @@ router.delete('/all/hotels',deleteAllHotels);
 
 //lay phong ra theo id
 router.get('/:id/rooms',getHotelRoomsByHotelId);
+
+router.get('/hotelandroom/:hotelId/:roomId', hotelandroombyid);
 
 module.exports = router;

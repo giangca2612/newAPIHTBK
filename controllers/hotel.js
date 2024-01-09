@@ -265,6 +265,39 @@ const getHotelRoomsSua = async (req, res, next) => {
     }
 };
 
+const hotelandroombyid = async (req, res, next) => {
+    try {
+      const { hotelId, roomId } = req.params;
+  
+      // Check if hotelId and roomId are provided
+      if (!hotelId || !roomId) {
+        return res.status(400).json({ error: 'Both hotelId and roomId are required parameters.' });
+      }
+  
+      // Find the hotel by ID
+      const hotel = await Hotel.findById(hotelId);
+  
+      // Check if the hotel exists
+      if (!hotel) {
+        return res.status(404).json({ error: 'Hotel not found.' });
+      }
+  
+      // Find the room by ID
+      const room = await Room.findById(roomId);
+  
+      // Check if the room exists
+      if (!room) {
+        return res.status(404).json({ error: 'Room not found.' });
+      }
+  
+      // Return the combined information of hotel and room
+      return res.status(200).json({ hotel, room });
+    } catch (error) {
+      console.error('Error fetching hotel and room details:', error);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
 const updateRoomDetailsById = async (req, res, next) => {
     try {
         const hotelId = req.params.hotelId;
@@ -319,5 +352,6 @@ module.exports = {
     updateRoomDetailsById,
     getMostBookedRoomDetails,
     deleteAllHotels,
-    getHotelRoomsByHotelId
+    getHotelRoomsByHotelId,
+    hotelandroombyid
 };
