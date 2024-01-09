@@ -10,6 +10,24 @@ const createBill = async (req, res, next) => {
     }
 };
 
+// Get Bill by ID
+const getBillById = async (req, res, next) => {
+    const billId = req.params.id;
+
+    try {
+        const foundBill = await Bill.findById(billId).populate('userID', 'username email').exec();
+        // Use populate to include the user details (username and email) from the 'User' model
+
+        if (!foundBill) {
+            return res.status(404).json({ message: 'Bill not found' });
+        }
+
+        res.status(200).json(foundBill);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // Delete Bill by ID
 const deleteBill = async (req, res, next) => {
     const billId = req.params.id;
@@ -42,4 +60,5 @@ module.exports = {
     createBill,
     deleteBill,
     getAllBills,
+    getBillById,
 };
