@@ -2,9 +2,17 @@ const Bill = require('../models/Bill'); // Correct the import statement
 
 const createBill = async (req, res, next) => {
     try {
-        const { thongtinpp,billMonney,imageHotelBill,billInfo, startbill, hotelcitybill, dateCheckin, dateCheckout } = req.body;
+        const {
+            thongtinpp,
+            billMonney,
+            imageHotelBill,
+            billInfo,
+            startbill,
+            hotelcitybill,
+            dateCheckin,
+            dateCheckout
+        } = req.body;
 
-        // Create a new Bill instance
         const newBill = new Bill({
             thongtinpp,
             billMonney,
@@ -22,6 +30,7 @@ const createBill = async (req, res, next) => {
         next(error);
     }
 };
+
 
 // Get Bill by ID
 const getBillById = async (req, res, next) => {
