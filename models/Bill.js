@@ -17,6 +17,14 @@ const BillSchema = new mongoose.Schema({
         required: true,
     },
 
+    imageHotelBill:{
+        type:String,
+    },
+
+    hotelcitybill:{
+        type:String,
+    },
+
     billMonney: {
         type: Number,
         required: true,
