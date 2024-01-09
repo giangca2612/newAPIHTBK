@@ -30,7 +30,8 @@ const deleteBill = async (req, res, next) => {
 // Get all Bills
 const getAllBills = async (req, res, next) => {
     try {
-        const allBills = await Bill.find();
+        const allBills = await Bill.find().populate('userID', 'username email').exec();
+        // Use populate to include the user details (username and email) from the 'User' model
         res.status(200).json(allBills);
     } catch (error) {
         next(error);
