@@ -9,9 +9,10 @@ const BillSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
-    thongtinpp: {
-        type: String,
+    thongtinpp:{
+        type:String,
     },
+    // tên roomtype
     billInfo: {
         type: String,
     },
@@ -21,28 +22,15 @@ const BillSchema = new mongoose.Schema({
     hotelcitybill: {
         type: String,
     },
-    startbill: {
+    startbill:{
         type: String,
     },
-    namebillroom: {
+    namebillroom:{
         type: String,
     },
     billMonney: {
         type: Number,
         required: true,
-    },
-    // New Fields
-    roomType: {
-        type: String,
-    },
-    roomMaxPeople: {
-        type: Number,
-    },
-    roomImage: {
-        type: String,
-    },
-    totalAmount: {
-        type: Number,
     },
     userID: {
         type: mongoose.Schema.Types.ObjectId,
@@ -73,6 +61,6 @@ const BillSchema = new mongoose.Schema({
     timestamps: true,
 });
 
-const Bill = mongoose.model('Bill', BillSchema);
+const Bill = mongoose.model("Bill", BillSchema);
 
 module.exports = Bill;

@@ -10,18 +10,13 @@ const createBill = async (req, res, next) => {
             startbill,
             hotelcitybill,
             dateCheckin,
-            dateCheckout,
-            roomType,        // New field for room type
-            roomMaxPeople,   // New field for max people in the room
-            roomImage,       // New field for room image
-            totalAmount,     // New field for total amount
+            dateCheckout
         } = req.body;
 
-        if (!thongtinpp || !billMonney || !imageHotelBill || !billInfo || !startbill || !hotelcitybill || !dateCheckin || !dateCheckout || !roomType || !roomMaxPeople || !roomImage || !totalAmount) {
+        if (!thongtinpp || !billMonney || !imageHotelBill || !billInfo || !startbill || !hotelcitybill || !dateCheckin || !dateCheckout) {
             return res.status(400).json({ error: 'Missing required fields in the request body.' });
         }
 
-        // Use the new room-related fields in creating the bill
         const newBill = new Bill({
             thongtinpp,
             billMonney,
@@ -31,10 +26,6 @@ const createBill = async (req, res, next) => {
             hotelcitybill,
             dateCheckin,
             dateCheckout,
-            roomType,
-            roomMaxPeople,
-            roomImage,
-            totalAmount,
         });
 
         const savedBill = await newBill.save();
