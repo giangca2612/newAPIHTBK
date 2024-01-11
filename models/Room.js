@@ -28,7 +28,6 @@ const RoomSchema = new mongoose.Schema({
         default: 'phòng trống',
     },
     
-    
     maxPeople : {
         type: Number,
     },

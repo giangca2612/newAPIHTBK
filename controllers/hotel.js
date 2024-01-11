@@ -1,5 +1,6 @@
 const { Hotel } = require('../models/Hotel');
 const { Room } = require('../models/Room');
+const { Bill } = require('../models/Bill');
 
 const createHotel = async (req, res, next) => {
     try {
@@ -375,6 +376,10 @@ const updateRoomDetailsById = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+};
+
+const findroomstatusdaduocthueandbill = async (req, res, next) => {
+
 };
 
 module.exports = {

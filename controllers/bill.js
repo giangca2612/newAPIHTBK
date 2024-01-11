@@ -1,4 +1,6 @@
 const Bill = require('../models/Bill'); // Correct the import statement
+const { Hotel } = require('../models/Hotel');  // Import Hotel model
+const { Room } = require('../models/Room'); 
 
 const createBill = async (req, res, next) => {
     try {
@@ -8,13 +10,27 @@ const createBill = async (req, res, next) => {
             imageHotelBill,
             billInfo,
             startbill,
-            hotelcitybill,
             dateCheckin,
-            dateCheckout
+            dateCheckout,
+            hotelId,
+            roomId,
+            isFinished // Make sure isFinished is present in the request body
         } = req.body;
 
-        if (!thongtinpp || !billMonney || !imageHotelBill || !billInfo || !startbill || !hotelcitybill || !dateCheckin || !dateCheckout) {
+        if (!thongtinpp || !billMonney || !imageHotelBill || !billInfo || !startbill || !dateCheckin || !dateCheckout || !hotelId || !roomId) {
             return res.status(400).json({ error: 'Missing required fields in the request body.' });
+        }
+
+        // Check if the hotel exists
+        const hotel = await Hotel.findById(hotelId);
+        if (!hotel) {
+            return res.status(404).json({ error: 'Hotel not found' });
+        }
+
+        // Check if the room exists
+        const room = await Room.findById(roomId);
+        if (!room) {
+            return res.status(404).json({ error: 'Room not found' });
         }
 
         const newBill = new Bill({
@@ -23,18 +39,24 @@ const createBill = async (req, res, next) => {
             imageHotelBill,
             billInfo,
             startbill,
-            hotelcitybill,
             dateCheckin,
             dateCheckout,
         });
+
+        // Link the bill to the room and save
+        room.billID = newBill._id;
+        room.isFinished = isFinished || false; // Set isFinished to the provided value or false if not present
+        await room.save();
+
+        // Link the room to the hotel and save
+        hotel.rooms.push(room._id);
+        await hotel.save();
 
         const savedBill = await newBill.save();
         res.status(201).json(savedBill);
     } catch (error) {
         console.error('Error creating bill:', error);
-        // Log the detailed error message and status code
         res.status(500).json({ error: 'Internal Server Error', details: error.message });
-        // Call next() to pass the error to the next middleware
         next(error);
     }
 };
