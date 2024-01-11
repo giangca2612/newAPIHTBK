@@ -222,13 +222,48 @@ const getHotelRoomsByHotelId = async (req, res, next) => {
             return res.status(404).json({ message: 'Hotel not found' });
         }
 
-        res.status(200).json({ hotel, rooms: hotel.rooms });
+        // Create a new object with the desired structure
+        const formattedHotelData = {
+            _id: hotel._id,
+            hotelName: hotel.hotelName,
+            hotelAddress: hotel.hotelAddress,
+            hotelCity: hotel.hotelCity,
+            phoneNumberHotel: hotel.phoneNumberHotel,
+            hotelFeedback: hotel.hotelFeedback,
+            rooms: hotel.rooms.map(room => ({
+                _id: room._id,
+                roomCode: room.roomCode,
+                roomType: room.roomType,
+                roomImage: room.roomImage,
+                roomPrice: room.roomPrice,
+                roomStatus: room.roomStatus,
+                maxPeople: room.maxPeople,
+                createdAt: room.createdAt,
+                updatedAt: room.updatedAt,
+                __v: room.__v,
+            })),
+            hotelRates: hotel.hotelRates,
+            hotelDetail: {
+                _id: hotel.hotelDetail._id,
+                hotelImage: hotel.hotelDetail.hotelImage,
+                hotelFeatured: hotel.hotelDetail.hotelFeatured,
+                hotelDescription: hotel.hotelDetail.hotelDescription,
+                hotelLocation: hotel.hotelDetail.hotelLocation,
+                createdAt: hotel.hotelDetail.createdAt,
+                updatedAt: hotel.hotelDetail.updatedAt,
+                __v: hotel.hotelDetail.__v,
+            },
+            createdAt: hotel.createdAt,
+            updatedAt: hotel.updatedAt,
+            __v: hotel.__v,
+        };
+
+        res.status(200).json(formattedHotelData);
     } catch (error) {
         res.status(400);
         next(error);
     }
 };
-
 
 const getHotelRoomsSua = async (req, res, next) => {
     try {
@@ -399,5 +434,5 @@ module.exports = {
     deleteAllHotels,
     getHotelRoomsByHotelId,
     hotelandroombyid,
-    updateroomstatusbyhotelidroomid
+    updateroomstatusbyhotelidroomid,
 };
