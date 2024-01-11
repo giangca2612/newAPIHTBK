@@ -38,6 +38,11 @@ const RoomSchema = new mongoose.Schema({
         type: Boolean,
     },
 
+    billID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Bill',
+    },
+
     // Khóa ngoại đến HotelDetail
     roomDetail: {
         type: mongoose.Schema.Types.ObjectId,
