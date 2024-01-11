@@ -343,14 +343,6 @@ const updateroomstatusbyhotelidroomid = async (req, res, next) => {
         return res.status(400).json({ error: 'Both hotelId and roomId are required parameters.' });
       }
   
-      // Find the hotel by ID
-      const hotel = await Hotel.findById(hotelId);
-  
-      // Check if the hotel exists
-      if (!hotel) {
-        return res.status(404).json({ error: 'Hotel not found.' });
-      }
-  
       // Find the room by ID
       const existingRoom = await Room.findById(roomId);
   
@@ -359,20 +351,21 @@ const updateroomstatusbyhotelidroomid = async (req, res, next) => {
         return res.status(404).json({ error: 'Room not found.' });
       }
   
-      // Update roomStatus to 'phòng chờ xác nhận'
+      // Update roomStatus to 'phòng đã được thuê'
       existingRoom.roomStatus = 'phòng đã được thuê';
+      existingRoom.isFinished = true; // Set isFinished to true or false based on your logic
       await existingRoom.save();
   
       // Fetch the updated room details
       const updatedRoomDetails = await Room.findById(roomId);
   
-      // Return the updated hotel and room information
-      return res.status(200).json({ hotel, room: updatedRoomDetails });
+      // Return the updated room information
+      return res.status(200).json({ room: updatedRoomDetails });
     } catch (error) {
       console.error('Error updating room status:', error);
       return res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
-};    
+  };  
 
 const updateRoomDetailsById = async (req, res, next) => {
     try {
