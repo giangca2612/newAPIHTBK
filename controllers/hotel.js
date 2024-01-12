@@ -406,9 +406,66 @@ const updateRoomDetailsById = async (req, res, next) => {
     }
 };
 
-const findroomstatusdaduocthueandbill = async (req, res, next) => {
+const findroomstatuschoxacnhanandbill = async (req, res, next) => {
+    try {
+        // Tìm kiếm tất cả các khách sạn
+        const hotels = await Hotel.find();
 
+        // Tạo một danh sách các khách sạn dựa trên danh sách phòng tìm được
+        const hotelData = [];
+
+        for (const hotel of hotels) {
+            // Tìm kiếm các phòng của khách sạn có 'phòng chờ xác nhận' và có billID khác null
+            const pendingRooms = await Room.find({
+                hotel: hotel._id,
+                roomStatus: 'phòng chờ xác nhận',
+            }).populate({
+                path: 'billID',
+                match: { $or: [{ _id: { $exists: false } }, { _id: { $ne: null } }] },
+            });
+
+            // Lọc ra những phòng có dữ liệu billID
+            const roomsWithBills = pendingRooms.filter(room => room.billID);
+
+            // Nếu có phòng thỏa mãn điều kiện, thêm thông tin vào danh sách khách sạn
+            if (roomsWithBills.length > 0) {
+                const hotelDetail = hotel.toObject();
+                hotelDetail.rooms = roomsWithBills;
+                hotelData.push(hotelDetail);
+            }
+        }
+
+        // Trả về thông tin khách sạn và danh sách phòng thỏa mãn điều kiện
+        res.json(hotelData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Có lỗi xảy ra.' });
+    }
 };
+
+const findhotelcocabill = async (req, res, next) => {
+    try {
+        const hotelId = req.params.hotelId;
+    
+        // Tìm kiếm khách sạn dựa trên ID
+        const hotel = await Hotel.findById(hotelId)
+          .populate({
+            path: 'rooms',
+            populate: {
+              path: 'billID',
+            },
+          });
+    
+        if (!hotel) {
+          return res.status(404).json({ message: 'Không tìm thấy khách sạn.' });
+        }
+    
+        res.json(hotel); // Trả về thông tin đầy đủ của khách sạn, phòng và hóa đơn
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Có lỗi xảy ra.' });
+      }
+}
 
 module.exports = {
     createHotel,
@@ -428,4 +485,6 @@ module.exports = {
     getHotelRoomsByHotelId,
     hotelandroombyid,
     updateroomstatusbyhotelidroomid,
+    findroomstatuschoxacnhanandbill,
+    findhotelcocabill
 };

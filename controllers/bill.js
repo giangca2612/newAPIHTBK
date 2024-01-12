@@ -22,7 +22,11 @@ const createBill = async (req, res, next) => {
         }
 
         // Check if the hotel exists
-        const hotel = await Hotel.findById(hotelId);
+        const hotel = await Hotel.findById(hotelId).populate({
+            path: 'rooms',
+            populate: { path: 'billID' }
+        }).populate('hotelDetail');
+
         if (!hotel) {
             return res.status(404).json({ error: 'Hotel not found' });
         }
@@ -31,6 +35,11 @@ const createBill = async (req, res, next) => {
         const room = await Room.findById(roomId);
         if (!room) {
             return res.status(404).json({ error: 'Room not found' });
+        }
+
+        // Check if the room is already associated with a bill
+        if (room.billID) {
+            return res.status(400).json({ error: 'Room already has an associated bill.' });
         }
 
         const newBill = new Bill({
@@ -48,12 +57,23 @@ const createBill = async (req, res, next) => {
         room.isFinished = isFinished || false; // Set isFinished to the provided value or false if not present
         await room.save();
 
-        // Link the room to the hotel and save
-        hotel.rooms.push(room._id);
-        await hotel.save();
-
         const savedBill = await newBill.save();
-        res.status(201).json(savedBill);
+        res.status(201).json({
+            savedBill,
+            room: {
+                _id: room._id,
+                roomCode: room.roomCode,
+                roomType: room.roomType,
+                roomImage: room.roomImage,
+                roomPrice: room.roomPrice,
+                roomStatus: room.roomStatus,
+                maxPeople: room.maxPeople,
+                createdAt: room.createdAt,
+                updatedAt: room.updatedAt,
+                isFinished: room.isFinished,
+                billID: room.billID,
+            },
+        });
     } catch (error) {
         console.error('Error creating bill:', error);
         res.status(500).json({ error: 'Internal Server Error', details: error.message });
