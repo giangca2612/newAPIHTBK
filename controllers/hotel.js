@@ -352,7 +352,7 @@ const updateroomstatusbyhotelidroomid = async (req, res, next) => {
       }
   
       // Update roomStatus to 'phòng đã được thuê'
-      existingRoom.roomStatus = 'phòng đã được thuê';
+      existingRoom.roomStatus = 'phòng chờ xác nhận';
       existingRoom.isFinished = true; // Set isFinished to true or false based on your logic
       await existingRoom.save();
   
