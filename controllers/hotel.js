@@ -1,6 +1,7 @@
 const { Hotel } = require('../models/Hotel');
 const { Room } = require('../models/Room');
 const { Bill } = require('../models/Bill');
+const { HotelDetail } = require('../models/HotelDetail');
 
 const createHotel = async (req, res, next) => {
     try {
@@ -34,12 +35,33 @@ const updateHotel = async (req, res, next) => {
 
 const deleteHotel = async (req, res, next) => {
     try {
-        await Hotel.findByIdAndDelete(req.params.id);
+        const hotelId = req.params.id;
+
+        // Find the hotel to get associated rooms and hotel detail
+        const hotel = await Hotel.findById(hotelId);
+
+        if (!hotel) {
+            throw createError(404, 'Hotel not found');
+        }
+
+        // Remove all associated rooms
+        if (hotel.rooms && hotel.rooms.length > 0) {
+            await Room.deleteMany({ _id: { $in: hotel.rooms } });
+        }
+
+        // Remove associated hotel detail
+        if (hotel.hotelDetail) {
+            await HotelDetail.findByIdAndDelete(hotel.hotelDetail);
+        }
+
+        // Delete the hotel itself
+        await Hotel.findByIdAndDelete(hotelId);
+
         res.status(204).end();
     } catch (error) {
         next(error);
     }
-}
+};
 
 const getHotelById = async (req, res, next) => {
     try {

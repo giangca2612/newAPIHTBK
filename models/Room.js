@@ -13,6 +13,11 @@ const RoomSchema = new mongoose.Schema({
         type: String,
     },
 
+    hotel: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Hotel',
+    },
+
     roomImage: {
         type: String,
     },

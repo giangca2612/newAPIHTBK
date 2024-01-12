@@ -61,24 +61,30 @@ const createRoom = async (req, res, next) => {
 };
 
 const deleteRoom = async (req, res, next) => {
-  try {
-      const roomId = req.params.id; // Change 'roomId' to 'id'
+    try {
+        const roomId = req.params.id;
 
-      const deletedRoom = await Room.findByIdAndDelete(roomId);
+        const deletedRoom = await Room.findByIdAndDelete(roomId);
 
-      if (!deletedRoom) {
-          throw createError(404, 'Room not found');
-      }
+        if (!deletedRoom) {
+            throw createError(404, 'Room not found');
+        }
 
-      // Remove room reference from associated hotel (if any)
-      if (deletedRoom.hotel) {
-          await Hotel.findByIdAndUpdate(deletedRoom.hotel, { $pull: { rooms: roomId } });
-      }
+        // Remove room reference from associated hotel (if any)
+        if (deletedRoom.hotel) {
+            const hotel = await Hotel.findById(deletedRoom.hotel);
 
-      res.status(200).json({ message: 'Room deleted successfully' });
-  } catch (error) {
-      next(error);
-  }
+            if (hotel) {
+                // Pull the room ID from the hotel's rooms array
+                hotel.rooms.pull(roomId);
+                await hotel.save();
+            }
+        }
+
+        res.status(200).json({ message: 'Room deleted successfully' });
+    } catch (error) {
+        next(error);
+    }
 };
   
   const updateRoom = async (req, res, next) => {
