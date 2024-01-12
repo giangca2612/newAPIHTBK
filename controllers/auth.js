@@ -38,6 +38,7 @@ exports.login = async (req, res, next) => {
     const user = await User.findOne({ phone: req.body.phone });
 
     if (!user) {
+      // If the user is not found, return a 404 error
       return next(createError(404, 'User not found'));
     }
 
@@ -45,6 +46,7 @@ exports.login = async (req, res, next) => {
     const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password);
 
     if (!isPasswordCorrect) {
+      // If the password is incorrect, return a 400 error
       return next(createError(400, 'Wrong Password or username'));
     }
 
@@ -57,6 +59,8 @@ exports.login = async (req, res, next) => {
       isAdmin,
     });
   } catch (error) {
+    // Handle errors
+    console.error('Error in login API:', error);
     next(error);
   }
 };
