@@ -11,7 +11,7 @@ const { createHotel, getHotelRooms, getAllHotels, updateHotel, deleteHotel, getH
 router.get('/search', searchHotels);
 
 //bill và room  phòng chờ xác nhận 
-router.get('/findbillandroomchoxacnhan', findroomstatuschoxacnhanandbill);
+router.get('/findbillandroomchoxacnhan/', findroomstatuschoxacnhanandbill);
 
 router.get('/findhotelcocabill/:id', findhotelcocabill);
 

@@ -430,38 +430,24 @@ const updateRoomDetailsById = async (req, res, next) => {
 
 const findroomstatuschoxacnhanandbill = async (req, res, next) => {
     try {
-        // Tìm kiếm tất cả các khách sạn
-        const hotels = await Hotel.find();
+        // Step 1: Find rooms with the specified status and a bill ID
+        const rooms = await Room.find({
+            roomStatus: 'phòng chờ xác nhận',
+            billID: { $exists: true }
+        });
 
-        // Tạo một danh sách các khách sạn dựa trên danh sách phòng tìm được
-        const hotelData = [];
+        console.log("Found rooms:", rooms);
 
-        for (const hotel of hotels) {
-            // Tìm kiếm các phòng của khách sạn có 'phòng chờ xác nhận' và có billID khác null
-            const pendingRooms = await Room.find({
-                hotel: hotel._id,
-                roomStatus: 'phòng chờ xác nhận',
-            }).populate({
-                path: 'billID',
-                match: { $or: [{ _id: { $exists: false } }, { _id: { $ne: null } }] },
-            });
+        // Step 2: Return only room information
+        const result = rooms.map(room => ({
+            room,
+        }));
 
-            // Lọc ra những phòng có dữ liệu billID
-            const roomsWithBills = pendingRooms.filter(room => room.billID);
-
-            // Nếu có phòng thỏa mãn điều kiện, thêm thông tin vào danh sách khách sạn
-            if (roomsWithBills.length > 0) {
-                const hotelDetail = hotel.toObject();
-                hotelDetail.rooms = roomsWithBills;
-                hotelData.push(hotelDetail);
-            }
-        }
-
-        // Trả về thông tin khách sạn và danh sách phòng thỏa mãn điều kiện
-        res.json(hotelData);
+        res.status(200).json({ result });
     } catch (error) {
+        // Handle errors
         console.error(error);
-        res.status(500).json({ message: 'Có lỗi xảy ra.' });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 };
 
