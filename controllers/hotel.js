@@ -289,35 +289,25 @@ const getHotelRoomsByHotelId = async (req, res, next) => {
 
 const getHotelRoomsSua = async (req, res, next) => {
     try {
-        // const hotelId = req.params.hotelId;
-        // const roomId = req.params.roomId;
-
-        // Find the hotel by ID with populated rooms and hotelDetail
-        const hotel = await Hotel.find(hotelId)
+        // Retrieve all hotels and populate rooms
+        const hotels = await Hotel.find()
             .populate({
                 path: 'rooms',
                 populate: {
                     path: 'roomDetail',
                 },
             })
-            .populate('hotelDetail');
+            .lean();
 
-        if (!hotel) {
-            return res.status(404).json({ message: 'Hotel not found' });
+        if (!hotels || hotels.length === 0) {
+            return res.status(404).json({ message: 'No hotels found' });
         }
 
-        // Find the specific room by ID
-        const room = hotel.rooms.find((r) => r._id.toString() === roomId);
 
-        if (!room) {
-            return res.status(404).json({ message: 'Room not found' });
+        if (!rooms || rooms.length === 0) {
+            return res.status(404).json({ message: 'No rooms found' });
         }
-
-        // Convert the hotel and room documents to plain JavaScript objects
-        const hotelData = hotel.toObject();
-        const roomData = room.toObject();
-
-        res.status(200).json({ hotel: hotelData, room: roomData });
+        
     } catch (error) {
         next(error);
     }
@@ -432,16 +422,21 @@ const findroomstatuschoxacnhanandbill = async (req, res, next) => {
     try {
         // Step 1: Find rooms with the specified status and a bill ID
         const rooms = await Room.find({
-            roomStatus: 'phòng chờ xác nhận',
-            billID: { $exists: true }
-        });
+            'roomStatus': 'phòng trống', // Assuming 'roomStatus' is a field in the Room model directly
+            'billID': { $exists: true }
+        }).populate('billID'); // Populate the bill information
 
         console.log("Found rooms:", rooms);
 
-        // Step 2: Return only room information
-        const result = rooms.map(room => ({
-            room,
-        }));
+        // Step 2: Extract hotel and bill information from the rooms
+        const result = rooms.map(room => {
+            const hotel = room.hotel; // Assuming 'hotel' field is populated
+            const bill = room.billID; // Assuming 'billID' field is populated
+            return {
+                room,
+                bill, // Include bill information in the result
+            };
+        });
 
         res.status(200).json({ result });
     } catch (error) {
