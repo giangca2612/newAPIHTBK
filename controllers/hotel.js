@@ -420,29 +420,55 @@ const updateRoomDetailsById = async (req, res, next) => {
 
 const findroomstatuschoxacnhanandbill = async (req, res, next) => {
     try {
-        // Step 1: Find rooms with the specified status and a bill ID
-        const rooms = await Room.find({
-            'roomStatus': 'phòng trống', // Assuming 'roomStatus' is a field in the Room model directly
-            'billID': { $exists: true }
-        }).populate('billID'); // Populate the bill information
-
-        console.log("Found rooms:", rooms);
-
-        // Step 2: Extract hotel and bill information from the rooms
-        const result = rooms.map(room => {
-            const hotel = room.hotel; // Assuming 'hotel' field is populated
-            const bill = room.billID; // Assuming 'billID' field is populated
-            return {
-                room,
-                bill, // Include bill information in the result
-            };
+        // Lấy danh sách khách sạn với thông tin về phòng, bao gồm cả thông tin Bill
+        const hotelsWithRoomsAndBills = await Hotel.find().populate({
+            path: 'rooms',
+            populate: {
+                path: 'billID',
+            },
         });
 
-        res.status(200).json({ result });
+        // Lọc ra những khách sạn và phòng thỏa mãn điều kiện
+        const filteredRooms = [];
+        hotelsWithRoomsAndBills.forEach(hotel => {
+            hotel.rooms.forEach(room => {
+                // Kiểm tra xem có phòng thỏa mãn điều kiện hay không
+                if (room.roomStatus === "phòng chờ xác nhận" && room.billID !== null) {
+                    filteredRooms.push({
+                        hotelName: hotel.hotelName,
+                        hotelAddress: hotel.hotelAddress,
+                        roomCode: room.roomCode,
+                        roomType: room.roomType,
+                        roomImage: room.roomImage,
+                        roomPrice: room.roomPrice,
+                        roomStatus: room.roomStatus,
+                        maxPeople: room.maxPeople,
+                        billID: room.billID,
+                        // Thêm thông tin từ Bill vào đây
+                        // billInfo: room.billID ? {
+                        //     dateCheckin: room.billID.dateCheckin,
+                        //     dateCheckout: room.billID.dateCheckout,
+                        //     thongtinpp: room.billID.thongtinpp,
+                        //     billInfo: room.billID.billInfo,
+                        //     imageHotelBill: room.billID.imageHotelBill,
+                        //     hotelcitybill: room.billID.hotelcitybill,
+                        //     startbill: room.billID.startbill,
+                        //     namebillroom: room.billID.namebillroom,
+                        //     billMonney: room.billID.billMonney,
+                        //     userID: room.billID.userID,
+                        //     paymentDetails: room.billID.paymentDetails,
+                        // } : null,
+                    });
+                }
+            });
+        });
+
+        // Trả về kết quả
+        res.status(200).json(filteredRooms);
     } catch (error) {
-        // Handle errors
+        // Xử lý lỗi nếu có
         console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: "Internal Server Error" });
     }
 };
 
