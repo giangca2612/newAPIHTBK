@@ -24,7 +24,7 @@ const createRoom = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-  };
+};
   
   
   const updateRoomStatus = async (req, res, next) => {

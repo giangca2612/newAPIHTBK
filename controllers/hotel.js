@@ -287,6 +287,78 @@ const getHotelRoomsByHotelId = async (req, res, next) => {
     }
 };
 
+const findngayhienroom = async (req, res, next) => {
+    try {
+        const hotelId = req.params.id;
+        const { startDate, endDate } = req.body;
+
+        // Kiểm tra xem ngày bắt đầu và kết thúc có được cung cấp không
+        if (!startDate || !endDate) {
+            return res.status(400).json({ error: 'Vui lòng cung cấp cả ngày bắt đầu và kết thúc' });
+        }
+
+        // Lấy thông tin của khách sạn dựa trên hotelId
+        const hotel = await Hotel.findById(hotelId).populate({
+            path: 'rooms',
+            populate: {
+                path: 'billID',
+            },
+        });
+
+        // Check if hotel is null or undefined
+        if (!hotel) {
+            console.error(`Không tìm thấy khách sạn với ID: ${hotelId}`);
+            return res.status(404).json({ error: 'Không tìm thấy khách sạn với ID đã cung cấp' });
+        }
+
+        // Extract hotel information
+        const hotelInfo = {
+            _id: hotel._id,
+            hotelName: hotel.hotelName,
+            hotelAddress: hotel.hotelAddress,
+            // Add other hotel details as needed
+        };
+
+        // Filter available rooms based on date range
+        const availableRooms = hotel.rooms.filter(room => {
+            // Check if the room is not booked and the booking covers the entire provided date range
+            return !room.billID &&
+                new Date(room.startDate) <= new Date(startDate) &&
+                new Date(room.endDate) >= new Date(endDate);
+        });
+        
+        // Extract room information with additional startDate and endDate
+        const roomInfo = availableRooms.map(room => {
+            const roomDetails = {
+                _id: room._id,
+                roomCode: room.roomCode,
+                roomType: room.roomType,
+                roomImage: room.roomImage,
+                roomPrice: room.roomPrice,
+                roomStatus: room.roomStatus,
+                maxPeople: room.maxPeople,
+                createdAt: room.createdAt,
+                updatedAt: room.updatedAt,
+                // Add other room details as needed
+            };
+
+            // Include startDate and endDate only if they exist
+            if (room.startDate && room.endDate) {
+                roomDetails.startDate = room.startDate;
+                roomDetails.endDate = room.endDate;
+            }
+
+            return roomDetails;
+        }).filter(room => room.startDate && room.endDate); // Filter out rooms without startDate and endDate
+
+        // Combine hotel and room information in the response
+        res.json({ hotel: hotelInfo, availableRooms: roomInfo });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Đã xảy ra lỗi khi tìm kiếm phòng.' });
+    }
+};
+
 const getHotelRoomsSua = async (req, res, next) => {
     try {
         // Retrieve all hotels and populate rooms
@@ -515,5 +587,6 @@ module.exports = {
     hotelandroombyid,
     updateroomstatusbyhotelidroomid,
     findroomstatuschoxacnhanandbill,
-    findhotelcocabill
+    findhotelcocabill,
+    findngayhienroom
 };

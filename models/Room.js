@@ -42,6 +42,16 @@ const RoomSchema = new mongoose.Schema({
         type: Boolean,
     },
 
+    // Thêm hai trường mới
+    startDate: {
+        type: Date,
+        required: true,
+    },
+    endDate: {
+        type: Date,
+        required: true,
+    },
+
     billID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Bill',
