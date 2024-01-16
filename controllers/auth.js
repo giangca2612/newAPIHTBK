@@ -64,3 +64,36 @@ exports.login = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.loginmail = async (req, res, next) => {
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+      // If the user is not found, return a 404 error
+      return next(createError(404, 'User not found'));
+    }
+
+    // Check if the provided password is correct
+    const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password);
+
+    if (!isPasswordCorrect) {
+      // If the password is incorrect, return a 400 error
+      return next(createError(400, 'Wrong Email or Password'));
+    }
+
+    // Omit sensitive information from the user object
+    const { password, isAdmin, ...otherDetails } = user._doc;
+
+    // Send user details in the response
+    res.status(200).json({
+      details: { ...otherDetails },
+      isAdmin,
+    });
+  } catch (error) {
+    // Handle errors
+    console.error('Error in login API:', error);
+    next(error);
+  }
+};
