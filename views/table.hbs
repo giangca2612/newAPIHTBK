@@ -65,10 +65,10 @@
                             <a href="table.html">
                                 <i class="fas fa-table"></i>Trang chủ</a>
                         </li>
-                        <li>
+                        {{!-- <li>
                             <a href="chart.html">
                                 <i class="fas fa-chart-bar"></i>Thống kê</a>
-                        </li>
+                        </li> --}}
 
                     </ul>
                 </nav>
@@ -171,9 +171,9 @@
                                     <thead>
                                         <tr>
                                             <th class="table-row-name">Khách sạn</th>
-                                            <th>Loại phòng</th>
-                                            <th>Tình trạng</th>
-                                            <th>Giá thuê</th>
+                                            <th>Vị trí</th>
+                                            <th>Địa chỉ</th>
+                                            <th>Hình</th>
                                             <th>Quản lý</th>
                                         </tr>
                                     </thead>
@@ -185,7 +185,7 @@
                                     <script>
                                         document.addEventListener('DOMContentLoaded', async function () {
                                             try {
-                                                const response = await fetch('http://localhost:4567/api/hotel/rooms/chitietht');
+                                                const response = await fetch('https://newapihtbk-production.up.railway.app/api/hotel');
                                                 const data = await response.json();
                                                 console.log('Received data:', data);
                                                 updateTable(data);
@@ -194,31 +194,31 @@
                                             }
                                         });
 
-                                        function updateTable(data) {
-                                            const tableBody = document.getElementById('hotelRoomsTableBody');
-                                            // Clear existing rows before adding new ones
-                                            tableBody.innerHTML = '';
+                                    function updateTable(data) {
+                                        const hotelRoomsTableBody = document.getElementById('hotelRoomsTableBody');
 
-                                            const generateRowId = (hotelId, roomId) => `${hotelId}-${roomId}`;
+                                        // Clear existing rows in the table
+                                        hotelRoomsTableBody.innerHTML = '';
 
-                                            data.forEach((hotel) => {
-                                                hotel.rooms.forEach((room) => {
-                                                    const rowId = generateRowId(hotel.hotelId, room.roomId);
-                                                    const row = `<tr id="${rowId}">
-                                                        <td>${hotel.hotelName}</td>
-                                                        <td>${room.roomType}</td>
-                                                        <td>${room.roomStatus}</td>
-                                                        <td>${room.roomPrice}</td>
-                                                        <td>
-                                                            <a href="#" onclick="goDetail('${hotel._id}', '${room._id}')">Sửa</a>
-
-                                                            <button onclick="confirmDelete('${room._id}', '${hotel._id}')">Xóa</button>
-                                                        </td>
-                                                    </tr>`;
-                                                    tableBody.insertAdjacentHTML('beforeend', row);
-                                                });
-                                            });
-                                        }
+                                        // Loop through the data and create HTML rows
+                                        data.forEach((hotel) => {
+                                            const row = `
+                                                <tr id="${hotel._id}">
+                                                    <td>${hotel.hotelName}</td>
+                                                    <td>${hotel.hotelDetail.hotelLocation}</td>
+                                                    <td>${hotel.hotelAddress}</td>
+                                                    <td>
+                                                        <img src="${hotel.hotelDetail.hotelImage}" alt="Hotel Image" style="width: 500px; height: auto;" />
+                                                    </td>
+                                                     <td>
+                                                        <a href="#" onclick="goDetail('${hotel._id}')" style="display: inline-block; padding: 8px 16px; background-color: #3498db; color: #fff; text-decoration: none; border-radius: 4px; cursor: pointer; width: 70px; height: 50px; font-size: 14px;line-height: 15px;">Xem phòng</a>
+                                                        <button onclick="confirmDelete('${hotel._id}')" style="display: inline-block; padding: 8px 16px; background-color: #e74c3c; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px;">Xóa</button>
+                                                    </td>
+                                                </tr>`;
+                                            // Append the row to the table body
+                                            hotelRoomsTableBody.innerHTML += row;
+                                        });
+                                    }
 
                                         async function confirmDelete(roomId, hotelId) {
                                             const isConfirmed = await Swal.fire({
@@ -254,10 +254,10 @@
                                             }
                                         }
 
-                                        function goDetail(hotelId, roomId) {
-                                            console.log('Navigating to form.html with hotelId:', hotelId, 'and roomId:', roomId);
+                                        function goDetail(hotelId) {
+                                            console.log('Navigating to form.html with hotelId:', hotelId,);
                                             // Use template literals to construct the URL with the hotelId and roomId
-                                            window.location.href = `/views/form.html?hotelId=${hotelId}&roomId=${roomId}`;
+                                            window.location.href = `table/room?hotelId=${hotelId}`;
                                         }
 
                                         async function fetchHotelRooms() {

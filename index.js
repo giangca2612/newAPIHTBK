@@ -53,6 +53,11 @@ app.get('/table', (req, res) => {
     res.render('table'); // Assuming 'table' is the name of your handlebars file without the extension
 });
 
+// Xử lý yêu cầu đến trang room
+app.get('/table/room', (req, res) => {
+    res.render('room'); // Assuming 'table' is the name of your handlebars file without the extension
+});
+
 app.use('/', indexRoutes);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
