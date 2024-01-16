@@ -311,9 +311,8 @@ const findngayhienroom = async (req, res, next) => {
             const searchStartDate = new Date(startDate);
             const searchEndDate = new Date(endDate);
 
-            // Check if the room is not booked and the booking covers the entire provided date range
+            // Check if the room's availability overlaps with the provided date range
             return (
-                !room.billID &&
                 roomStartDate <= searchEndDate &&
                 roomEndDate >= searchStartDate
             );
