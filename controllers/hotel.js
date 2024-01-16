@@ -335,6 +335,44 @@ const findngayhienroom = async (req, res, next) => {
     }
 };
 
+const updatestatusdadat = async (req, res, next) => {
+    try {
+        const { hotelId, roomId } = req.params;
+
+        // Check if hotelId and roomId are provided
+        if (!hotelId || !roomId) {
+            return res.status(400).json({ error: 'Both hotelId and roomId are required parameters.' });
+        }
+
+        // Find the room by ID
+        const existingRoom = await Room.findById(roomId);
+
+        // Check if the room exists
+        if (!existingRoom) {
+            return res.status(404).json({ error: 'Room not found.' });
+        }
+
+        // Check if the current roomStatus is 'phòng chờ xác nhận'
+        if (existingRoom.roomStatus === 'phòng chờ xác nhận') {
+            // Update roomStatus to 'phòng đã được thuê'
+            existingRoom.roomStatus = 'phòng đã được thuê';
+            existingRoom.isFinished = true; // Set isFinished to true or false based on your logic
+            await existingRoom.save();
+
+            // Fetch the updated room details
+            const updatedRoomDetails = await Room.findById(roomId);
+
+            // Return the updated room information
+            return res.status(200).json({ room: updatedRoomDetails, message: 'Room status updated successfully.' });
+        } else {
+            return res.status(400).json({ error: 'Room is not in the correct status for update.' });
+        }
+    } catch (error) {
+        console.error('Error updating room status:', error);
+        return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
+};
+
 const getHotelRoomsSua = async (req, res, next) => {
     try {
         // Retrieve all hotels and populate rooms
@@ -564,5 +602,6 @@ module.exports = {
     updateroomstatusbyhotelidroomid,
     findroomstatuschoxacnhanandbill,
     findhotelcocabill,
-    findngayhienroom
+    findngayhienroom,
+    updatestatusdadat
 };
