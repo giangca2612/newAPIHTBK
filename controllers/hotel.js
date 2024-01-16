@@ -17,12 +17,13 @@ const createHotel = async (req, res, next) => {
 
 const getAllHotels = async (req, res, next) => {
     try {
-        const allHotels = await Hotel.find();
-        res.status(200).json(allHotels);
+        const hotels = await Hotel.find({}).populate('hotelDetail');
+
+        res.status(200).json(hotels);
     } catch (error) {
         next(error);
     }
-}
+};
 
 const updateHotel = async (req, res, next) => {
     try {

@@ -41,11 +41,17 @@ const db_conect = async () => {
 app.use(cors())
 app.use(cookieParser())
 app.use(express.json())
+app.use(express.static('public'));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 // app.engine('handlebars', hbs.engine);
 app.set('view engine', 'hbs');
+
+// Xử lý yêu cầu đến trang table
+app.get('/table', (req, res) => {
+    res.render('table'); // Assuming 'table' is the name of your handlebars file without the extension
+});
 
 app.use('/', indexRoutes);
 app.use('/api/users', usersRouter);
