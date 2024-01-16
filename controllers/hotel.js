@@ -292,26 +292,34 @@ const findngayhienroom = async (req, res, next) => {
         const hotelId = req.params.id;
         const { startDate, endDate } = req.body;
 
-        // Kiểm tra xem ngày bắt đầu và kết thúc có được cung cấp không
+        // Check if startDate and endDate are provided
         if (!startDate || !endDate) {
-            return res.status(400).json({ error: 'Vui lòng cung cấp cả ngày bắt đầu và kết thúc' });
+            return res.status(400).json({ error: 'Please provide both start and end dates.' });
         }
 
-        // Lấy thông tin của khách sạn dựa trên hotelId
-        const hotel = await Hotel.findById(hotelId).populate({
-            path: 'rooms',
-            populate: {
-                path: 'billID',
-            },
+        // Find the hotel by ID and populate its rooms
+        const hotel = await Hotel.findById(hotelId).populate('rooms');
+
+        if (!hotel) {
+            return res.status(404).json({ error: 'Hotel not found with the provided ID.' });
+        }
+
+        // Filter available rooms based on the date range
+        const availableRooms = hotel.rooms.filter(room => {
+            const roomStartDate = new Date(room.startDate);
+            const roomEndDate = new Date(room.endDate);
+            const searchStartDate = new Date(startDate);
+            const searchEndDate = new Date(endDate);
+
+            // Check if the room is not booked and the booking covers the entire provided date range
+            return (
+                !room.billID &&
+                roomStartDate <= searchEndDate &&
+                roomEndDate >= searchStartDate
+            );
         });
 
-        // Check if hotel is null or undefined
-        if (!hotel) {
-            console.error(`Không tìm thấy khách sạn với ID: ${hotelId}`);
-            return res.status(404).json({ error: 'Không tìm thấy khách sạn với ID đã cung cấp' });
-        }
-
-        // Extract hotel information
+        // Extract relevant information for the response
         const hotelInfo = {
             _id: hotel._id,
             hotelName: hotel.hotelName,
@@ -319,43 +327,26 @@ const findngayhienroom = async (req, res, next) => {
             // Add other hotel details as needed
         };
 
-        // Filter available rooms based on date range
-        const availableRooms = hotel.rooms.filter(room => {
-            // Check if the room is not booked and the booking covers the entire provided date range
-            return !room.billID &&
-                new Date(room.startDate) <= new Date(startDate) &&
-                new Date(room.endDate) >= new Date(endDate);
-        });
-        
-        // Extract room information with additional startDate and endDate
-        const roomInfo = availableRooms.map(room => {
-            const roomDetails = {
-                _id: room._id,
-                roomCode: room.roomCode,
-                roomType: room.roomType,
-                roomImage: room.roomImage,
-                roomPrice: room.roomPrice,
-                roomStatus: room.roomStatus,
-                maxPeople: room.maxPeople,
-                createdAt: room.createdAt,
-                updatedAt: room.updatedAt,
-                // Add other room details as needed
-            };
+        const roomInfo = availableRooms.map(room => ({
+            _id: room._id,
+            roomCode: room.roomCode,
+            roomType: room.roomType,
+            roomImage: room.roomImage,
+            roomPrice: room.roomPrice,
+            roomStatus: room.roomStatus,
+            maxPeople: room.maxPeople,
+            createdAt: room.createdAt,
+            updatedAt: room.updatedAt,
+            startDate: room.startDate,
+            endDate: room.endDate,
+            // Add other room details as needed
+        }));
 
-            // Include startDate and endDate only if they exist
-            if (room.startDate && room.endDate) {
-                roomDetails.startDate = room.startDate;
-                roomDetails.endDate = room.endDate;
-            }
-
-            return roomDetails;
-        }).filter(room => room.startDate && room.endDate); // Filter out rooms without startDate and endDate
-
-        // Combine hotel and room information in the response
+        // Return the combined hotel and room information
         res.json({ hotel: hotelInfo, availableRooms: roomInfo });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Đã xảy ra lỗi khi tìm kiếm phòng.' });
+        res.status(500).json({ error: 'An error occurred while searching for available rooms.' });
     }
 };
 
