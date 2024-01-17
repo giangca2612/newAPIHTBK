@@ -1,0 +1,277 @@
+<body class="animsition">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const hotelId = urlParams.get('hotelId');
+            const roomId = urlParams.get('roomId');
+
+            console.log('Hotel ID:', hotelId);
+            console.log('Room ID:', roomId);
+
+            if (hotelId && roomId) {
+                // Store roomId in a variable accessible within the script
+                window.roomId = roomId;
+
+                await fetchHotelAndRoomDetails(hotelId, roomId);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('updateForm').addEventListener('submit', async function (event) {
+                event.preventDefault(); // Ngăn chặn form tự động submit
+
+                // Lấy giá trị từ các trường input
+                const roomtype = document.getElementById('roomType').value;
+                const roomPrice = document.getElementById('roomPrice').value;
+                const roomStatus = document.getElementById('roomStatus').value;
+                const fileInput = document.getElementById('file-input');
+                const file = fileInput.files[0];
+
+                // Tạo FormData object để chứa dữ liệu form
+                const formData = new FormData();
+                formData.append('roomType', roomtype);
+                formData.append('roomPrice', roomPrice);
+                formData.append('roomStatus', roomStatus);
+                formData.append('file-input', file);
+
+                try {
+                    // Gọi API updateRoom
+                    const response = await fetch('https://newapihtbk-production.up.railway.app/api/room/' + window.roomId, {
+                        method: 'PUT',
+                        body: formData,
+                    });
+
+                    console.error('Error updating room:', response.status, response.statusText);
+                    const errorText = await response.text();
+                    console.log('Error details:', errorText);
+
+                   if (response.ok) {
+                        const updatedRoom = await response.json();
+                        console.log('Room updated:', updatedRoom);
+                        // Thực hiện các hành động khác nếu cần
+                    } else {
+                        console.error('Error updating room:', response.status, response.statusText);
+                        const errorText = await response.text();
+                        console.log('Error details:', errorText);
+                        // Xử lý lỗi nếu cần
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error.message);
+                    // Xử lý lỗi nếu cần
+                }
+            });
+        });
+    </script>
+
+    <script>
+        const fetchHotelAndRoomDetails = async (hotelId, roomId) => {
+            try {
+                const response = await fetch(`https://newapihtbk-production.up.railway.app/api/hotel/hotelandroom/${hotelId}/${roomId}`);
+                if (!response.ok) {
+                    const errorText = await response.text(); // Read the response as text
+                    throw new Error(`Error: ${response.statusText} - ${errorText}`);
+                }
+                const data = await response.json();
+                console.log('Hotel and Room Details:', data);
+                // Process the hotel and room details as needed
+
+                document.getElementById('roomType').value = data.room.roomType;
+                document.getElementById('roomPrice').value = data.room.roomPrice;
+                const roomStatusSelect = document.getElementById('roomStatus');
+                const roomStatusValue = data.room.roomStatus;
+
+                // Set selected option for roomStatus based on the received value
+                for (let i = 0; i < roomStatusSelect.options.length; i++) {
+                    if (roomStatusSelect.options[i].value === roomStatusValue) {
+                        roomStatusSelect.options[i].selected = true;
+                        break;
+                    }
+                }
+                // Add your code to process the data received from the API
+            } catch (error) {
+                console.error('Error fetching hotel and room details:', error.message);
+                // Handle error if needed
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const hotelId = urlParams.get('hotelId');
+            const roomId = urlParams.get('roomId');
+
+            console.log('Hotel ID:', hotelId);
+            console.log('Room ID:', roomId);
+
+            if (hotelId && roomId) {
+                await fetchHotelAndRoomDetails(hotelId, roomId);
+            }
+        });
+    </script>
+
+    <div class="page-wrapper">
+        <!-- HEADER MOBILE-->
+        <header class="header-mobile d-block d-lg-none">
+            <div class="header-mobile__bar">
+                <div class="container-fluid">
+                    <div class="header-mobile-inner">
+                        <a class="logo" href="index.html">
+                            <img src="/public/images/icon/logo.png" alt="CoolAdmin" />
+                        </a>
+                        <button class="hamburger hamburger--slider" type="button">
+                            <span class="hamburger-box">
+                                <span class="hamburger-inner"></span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- END HEADER MOBILE-->
+
+        <!-- MENU SIDEBAR-->
+        <aside class="menu-sidebar d-none d-lg-block">
+            <div class="logo">
+                <a href="#">
+                    <img src="/public/images/icon/logo.png" alt="Cool Admin" />
+                </a>
+            </div>
+            <div class="menu-sidebar__content js-scrollbar1">
+                <nav class="navbar-sidebar">
+                    <ul class="list-unstyled navbar__list">
+                        <li class="active">
+                            <a href="table.html">
+                                <i class="fas fa-table"></i>Trang chủ</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+        <!-- END MENU SIDEBAR-->
+
+        <!-- PAGE CONTAINER-->
+        <div class="page-container">
+            <!-- HEADER DESKTOP-->
+            <header class="header-desktop">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="header-wrap">
+                            <form class="form-header" action="" method="POST">
+                                <input class="au-input au-input--xl" type="text" name="search"
+                                    placeholder="Search for datas &amp; reports..." />
+                                <button class="au-btn--submit" type="submit">
+                                    <i class="zmdi zmdi-search"></i>
+                                </button>
+                            </form>
+                            <div class="header-button">
+                                <div class="account-wrap">
+                                    <div class="account-item clearfix js-item-menu">
+                                        <div class="image">
+                                            <img src="/public/images/icon/avatar-01.jpg" alt="John Doe" />
+                                        </div>
+                                        <div class="content">
+                                            <a class="js-acc-btn" href="#">john doe</a>
+                                        </div>
+                                        <div class="account-dropdown js-dropdown">
+                                            <div class="info clearfix">
+                                                <div class="image">
+                                                    <a href="#">
+                                                        <img src="/public/images/icon/avatar-01.jpg" alt="John Doe" />
+                                                    </a>
+                                                </div>
+                                                <div class="content">
+                                                    <h5 class="name">
+                                                        <a href="#">john doe</a>
+                                                    </h5>
+                                                    <span class="email">johndoe@example.com</span>
+                                                </div>
+                                            </div>
+                                            <div class="account-dropdown__footer">
+                                                <a href="#">
+                                                    <i class="zmdi zmdi-power"></i>Logout</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- HEADER DESKTOP-->
+
+            <!-- MAIN CONTENT-->
+            <div class="main-content">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card">
+                                    <div class="card-header"></div>
+                                    <div class="card-body">
+                                        <div class="card-title">
+                                            <h3 class="text-center title-2">Thông tin phòng</h3>
+                                        </div>
+                                        <hr>
+                                        <center>
+                                            <img width="75%" src="/public/images/icon/hotel.jpg" /><br><br>
+                                        </center>
+                                        <form method="PUT" enctype="multipart/form-data" novalidate="novalidate" id="updateForm">
+                                            <div class="form-group has-success">
+                                                <label for="roomType" class="control-label mb-1">Tên Phòng</label>
+                                                <input type="text" id="roomType" name="roomType" required class="form-control cc-name valid"
+                                                    data-val="true" data-val-required="Please enter the name on card" autocomplete="cc-name"
+                                                    aria-required="true" aria-invalid="false" aria-describedby="cc-name-error">
+                                                <span class="help-block field-validation-valid" data-valmsg-for="cc-name"
+                                                    data-valmsg-replace="true"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="roomPrice" class="control-label mb-1">Giá Phòng</label>
+                                                <input type="text" id="roomPrice" name="roomPrice" required class="form-control"
+                                                    aria-required="true" aria-invalid="false">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="roomStatus" class="form-control-label">Trạng thái phòng</label>
+                                                <select type="text" id="roomStatus" name="roomStatus" required class="form-control">
+                                                    <option value="phòng trống">Phòng trống</option>
+                                                    <option value="phòng chờ xác nhận">phòng chờ xác nhận</option>
+                                                    <option value="phòng đã được thuê">phòng đã được thuê</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="file-input" class="form-control-label">Tải hình ảnh</label>
+                                                <div class="col-12 col-md-9">
+                                                    <input type="file" id="file-input" name="file-input" class="form-control-file">
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <button type="submit" class="btn btn-lg btn-info btn-block" id="submitBtn">
+                                                    <i class="fa fa-check-square-o"></i>
+                                                    <span id="submit">Submit</span>
+                                                    <span id="payment-button-sending" style="display:none;">Sending…</span>
+                                                </button>
+                                            </div>
+                                        </form>
+
+                                        <script>
+                                            function setEndDateMin() {
+                                                // Get the value of the start date input
+                                                var startDate = document.getElementById("startDate").value;
+
+                                                // Set the min attribute of the end date input to the selected start date
+                                                document.getElementById("endDate").min = startDate;
+                                            }
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

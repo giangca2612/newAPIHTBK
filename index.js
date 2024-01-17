@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 require('dotenv').config()
 const path = require('path');
+const exphbs = require('express-handlebars');
 
 
 //routes
@@ -46,6 +47,7 @@ app.use(express.static('public'));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 // app.engine('handlebars', hbs.engine);
+// app.engine('hbs', exphbs({ extname: 'hbs' }));
 app.set('view engine', 'hbs');
 
 // Xử lý yêu cầu đến trang table
@@ -56,6 +58,10 @@ app.get('/table', (req, res) => {
 // Xử lý yêu cầu đến trang room
 app.get('/table/room', (req, res) => {
     res.render('room'); // Assuming 'table' is the name of your handlebars file without the extension
+});
+
+app.get('/table/room/form', (req, res) => {
+    res.render('form'); // Assuming 'table' is the name of your handlebars file without the extension
 });
 
 app.use('/', indexRoutes);

@@ -7,12 +7,10 @@
                 const hotelId = urlParams.get('hotelId');
 
                 const response = await fetch(`https://newapihtbk-production.up.railway.app/api/hotel/updatestatusdadat/${hotelId}/${roomId}`, {
-                    method: 'POST', // or 'PUT' or 'PATCH' based on your API endpoint requirements
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        // Add any other headers as needed
                     },
-                    // Add any request body if required
                 });
 
                 if (!response.ok) {
@@ -21,6 +19,9 @@
 
                 const updatedRoom = await response.json();
                 console.log('Room updated:', updatedRoom); // Add this line for debugging
+
+                // After successfully updating the room, you may want to refresh the room data on the page
+                fetchRoomData();
 
             } catch (error) {
                 console.error('Error managing room:', error.message);
@@ -52,6 +53,18 @@
             return formattedDate;
         }
 
+        async function sua(roomId) {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const hotelId = urlParams.get('hotelId');
+
+                // Assuming your form page is named 'form.hbs'
+                window.location.href =`room/form?hotelId=${hotelId}&roomId=${roomId}`;
+            } catch (error) {
+                console.error('Error navigating to edit form:', error.message);
+            }
+        }
+
         function updateRoomDOM(roomData) {
             const tableBody = document.getElementById('hotelRoomsTableBody');
             tableBody.innerHTML = ''; // Clear existing content
@@ -59,14 +72,16 @@
             roomData.forEach(room => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${room.roomType}</td>
-                    <td>${room.roomStatus}</td>
-                    <td>${formatDate(room.startDate)} - ${formatDate(room.endDate)}</td>
-                    <td><img src="${room.roomImage}" alt="Room Image"></td>
-                    <td>
-                        <button onclick="editRoom('${room._id}')" style="background-color: #008CBA; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px;">Sửa</button>
-                        ${room.roomStatus === 'phòng chờ xác nhận' ? `<button onclick="manageRoom('${room._id}')" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer;">Xác nhận</button>` : ''}
-                    </td>
+                    <tr id="${room._id}">
+                        <td>${room.roomType}</td>
+                        <td>${room.roomStatus}</td>
+                        <td>${room.roomPrice}</td>
+                        <td><img src="${room.roomImage}" alt="Room Image"></td>
+                        <td>
+                            <button onclick="sua('${room._id}')" style="background-color: #008CBA; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px;">Sửa</button>
+                            ${room.roomStatus === 'phòng chờ xác nhận' ? `<button onclick="manageRoom('${room._id}')" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer;">Xác nhận</button>` : ''}
+                        </td>
+                    </tr>
                 `;
                 tableBody.appendChild(row);
             });
@@ -132,10 +147,10 @@
                                 <table class="table table-borderless table-data3">
                                     <thead>
                                         <tr>
-                                            <th class="table-row-name">Khách sạn</th>
-                                            <th>Vị trí</th>
-                                            <th>Địa chỉ</th>
-                                            <th>Hình</th>
+                                            <th class="table-row-name">Tên phòng</th>
+                                            <th>Trạng thái</th>
+                                            <th>Giá</th>
+                                            <th>Hình phòng</th>
                                             <th>Quản lý</th>
                                         </tr>
                                     </thead>

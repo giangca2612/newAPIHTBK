@@ -99,9 +99,9 @@ const deleteRoom = async (req, res, next) => {
 
         const updatedRoom = await Room.findByIdAndUpdate(roomId, updates, { new: true });
 
-        if (!updatedRoom) {
-            throw createError(404, 'Room not found');
-        }
+        if (!updates || Object.keys(updates).length === 0) {
+            throw new Error(400, 'No updates provided');
+        }        
 
         res.status(200).json(updatedRoom);
     } catch (error) {
