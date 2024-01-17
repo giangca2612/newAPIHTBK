@@ -604,6 +604,8 @@ const findroomstatusdaxacnhanandbill = async (req, res, next) => {
                 // Kiểm tra xem có phòng thỏa mãn điều kiện hay không
                 if (room.roomStatus === "phòng đã được thuê" && room.billID !== null) {
                     filteredRooms.push({
+                        hotelID: hotel._id, // Add hotel ID
+                        roomID: room._id,
                         hotelName: hotel.hotelName,
                         hotelAddress: hotel.hotelAddress,
                         roomCode: room.roomCode,
