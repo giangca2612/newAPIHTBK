@@ -281,7 +281,6 @@ const getHotelRoomsByHotelId = async (req, res, next) => {
             hotelAddress: hotel.hotelAddress,
             hotelCity: hotel.hotelCity,
             phoneNumberHotel: hotel.phoneNumberHotel,
-            hotelRates: hotel.hotelRates,
             hotelFeedback: hotel.hotelFeedback,
             rooms: hotel.rooms.map(room => ({
                 ...room.toObject(), // Include all room properties
@@ -608,6 +607,7 @@ const findroomstatusdaxacnhanandbill = async (req, res, next) => {
                         hotelID: hotel._id, // Add hotel ID
                         roomID: room._id,
                         hotelName: hotel.hotelName,
+                        hotelRates: hotel.hotelRates,
                         hotelAddress: hotel.hotelAddress,
                         roomCode: room.roomCode,
                         roomType: room.roomType,
@@ -667,6 +667,7 @@ const findroomstatusdaxacnhanandbillbyidhotelidroom = async (req , res , next) =
             if (room._id.toString() === roomId && room.roomStatus === "phòng đã được thuê" && room.billID !== null) {
                 filteredRooms.push({
                     hotelName: hotelsWithRoomsAndBills.hotelName,
+                    hotelRates: hotelsWithRoomsAndBills.hotelRates,
                     hotelAddress: hotelsWithRoomsAndBills.hotelAddress,
                     roomCode: room.roomCode,
                     roomType: room.roomType,
