@@ -281,6 +281,7 @@ const getHotelRoomsByHotelId = async (req, res, next) => {
             hotelAddress: hotel.hotelAddress,
             hotelCity: hotel.hotelCity,
             phoneNumberHotel: hotel.phoneNumberHotel,
+            hotelRates: hotel.hotelRates,
             hotelFeedback: hotel.hotelFeedback,
             rooms: hotel.rooms.map(room => ({
                 ...room.toObject(), // Include all room properties
