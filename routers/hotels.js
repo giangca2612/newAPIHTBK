@@ -36,7 +36,7 @@ router.delete('/:id', deleteHotel);
 router.get('/:id', getHotelById);
 
 //Chi tiết khách sạn:
-router.get('/details/:id', getHotelDetails);
+router.get('/details/:hotelId/:roomId', getHotelDetails);
 
 // router.get('/rooms/:id', getHotelRooms);
 router.get('/rooms/chitietht', getHotelRooms);

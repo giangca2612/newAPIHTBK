@@ -195,11 +195,40 @@ const deleteAllHotels = async (req, res, next) => {
 
 const getHotelDetails = async (req, res, next) => {
     try {
-        const hotel = await Hotel.findById(req.params.id).populate('rooms').populate('hotelDetail');
+        const hotel = await Hotel.findById(req.params.hotelId).populate('rooms').populate('hotelDetail');
         if (!hotel) {
             return res.status(404).json({ message: 'Hotel not found' });
         }
-        res.status(200).json(hotel);
+
+        // Find the room within the hotel by room ID
+        const room = hotel.rooms.find(room => room._id.toString() === req.params.roomId);
+        if (!room) {
+            return res.status(404).json({ message: 'Room not found in the specified hotel' });
+        }
+
+        // Return both hotel, hotelDetail, and room details
+        res.status(200).json({
+            hotel: {
+                _id: hotel._id,
+                hotelName: hotel.hotelName,
+                hotelAddress: hotel.hotelAddress,
+                // Add other hotel details as needed
+                hotelRates: hotel.hotelRates,
+                hotelDetail: hotel.hotelDetail,
+                createdAt: hotel.createdAt,
+                updatedAt: hotel.updatedAt,
+            },
+            room: {
+                _id: room._id,
+                roomCode: room.roomCode,
+                roomType: room.roomType,
+                roomImage: room.roomImage,
+                roomPrice: room.roomPrice,
+                // Add other room details as needed
+                createdAt: room.createdAt,
+                updatedAt: room.updatedAt,
+            }
+        });
     } catch (error) {
         next(error);
     }
