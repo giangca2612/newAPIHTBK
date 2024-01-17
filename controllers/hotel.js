@@ -558,6 +558,60 @@ const findroomstatuschoxacnhanandbill = async (req, res, next) => {
     }
 };
 
+const findroomstatusdaxacnhanandbill = async (req, res, next) => {
+    try {
+        // Lấy danh sách khách sạn với thông tin về phòng, bao gồm cả thông tin Bill
+        const hotelsWithRoomsAndBills = await Hotel.find().populate({
+            path: 'rooms',
+            populate: {
+                path: 'billID',
+            },
+        });
+
+        // Lọc ra những khách sạn và phòng thỏa mãn điều kiện
+        const filteredRooms = [];
+        hotelsWithRoomsAndBills.forEach(hotel => {
+            hotel.rooms.forEach(room => {
+                // Kiểm tra xem có phòng thỏa mãn điều kiện hay không
+                if (room.roomStatus === "phòng đã được thuê" && room.billID !== null) {
+                    filteredRooms.push({
+                        hotelName: hotel.hotelName,
+                        hotelAddress: hotel.hotelAddress,
+                        roomCode: room.roomCode,
+                        roomType: room.roomType,
+                        roomImage: room.roomImage,
+                        roomPrice: room.roomPrice,
+                        roomStatus: room.roomStatus,
+                        maxPeople: room.maxPeople,
+                        billID: room.billID,
+                        // Thêm thông tin từ Bill vào đây
+                        // billInfo: room.billID ? {
+                        //     dateCheckin: room.billID.dateCheckin,
+                        //     dateCheckout: room.billID.dateCheckout,
+                        //     thongtinpp: room.billID.thongtinpp,
+                        //     billInfo: room.billID.billInfo,
+                        //     imageHotelBill: room.billID.imageHotelBill,
+                        //     hotelcitybill: room.billID.hotelcitybill,
+                        //     startbill: room.billID.startbill,
+                        //     namebillroom: room.billID.namebillroom,
+                        //     billMonney: room.billID.billMonney,
+                        //     userID: room.billID.userID,
+                        //     paymentDetails: room.billID.paymentDetails,
+                        // } : null,
+                    });
+                }
+            });
+        });
+
+        // Trả về kết quả
+        res.status(200).json(filteredRooms);
+    } catch (error) {
+        // Xử lý lỗi nếu có
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
 const findhotelcocabill = async (req, res, next) => {
     try {
         const hotelId = req.params.hotelId;
@@ -603,5 +657,6 @@ module.exports = {
     findroomstatuschoxacnhanandbill,
     findhotelcocabill,
     findngayhienroom,
-    updatestatusdadat
+    updatestatusdadat,
+    findroomstatusdaxacnhanandbill
 };

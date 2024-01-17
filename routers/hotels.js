@@ -4,7 +4,7 @@ const router = express.Router();
 const { createHotel, getHotelRooms, getAllHotels, updateHotel, deleteHotel, getHotelById, searchHotels,
     getHotelDetails,
     deleteRoom, getHotelRoomsSua, updateRoomDetailsById, getMostBookedRoomDetails, deleteAllHotels, getHotelRoomsByHotelId, hotelandroombyid ,
-    updateroomstatusbyhotelidroomid, findroomstatuschoxacnhanandbill,findhotelcocabill,findngayhienroom,updatestatusdadat} = require("../controllers/hotel");
+    updateroomstatusbyhotelidroomid, findroomstatuschoxacnhanandbill,findhotelcocabill,findngayhienroom,updatestatusdadat,findroomstatusdaxacnhanandbill} = require("../controllers/hotel");
 
 //Tìm kiếm khách sạn theo thành phố và các thông số khác:
 // Search hotels based on criteria
@@ -15,6 +15,8 @@ router.post('/findroomtheongay/:id', findngayhienroom);
 
 //bill và room  phòng chờ xác nhận 
 router.get('/findbillandroomchoxacnhan/', findroomstatuschoxacnhanandbill);
+
+router.get('/findroomstatusdaxacnhanandbill/', findroomstatusdaxacnhanandbill);
 
 router.get('/findhotelcocabill/:id', findhotelcocabill);
 
