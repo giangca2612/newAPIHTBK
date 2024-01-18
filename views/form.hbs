@@ -1,70 +1,66 @@
 <body class="animsition">
-
     <script>
-        document.addEventListener('DOMContentLoaded', async function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const hotelId = urlParams.get('hotelId');
-            const roomId = urlParams.get('roomId');
-
-            console.log('Hotel ID:', hotelId);
-            console.log('Room ID:', roomId);
-
-            if (hotelId && roomId) {
-                // Store roomId in a variable accessible within the script
-                window.roomId = roomId;
-
-                await fetchHotelAndRoomDetails(hotelId, roomId);
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('updateForm').addEventListener('submit', async function (event) {
-                event.preventDefault(); // Ngăn chặn form tự động submit
-
-                // Lấy giá trị từ các trường input
-                const roomtype = document.getElementById('roomType').value;
-                const roomPrice = document.getElementById('roomPrice').value;
-                const roomStatus = document.getElementById('roomStatus').value;
-                const fileInput = document.getElementById('file-input');
-                const file = fileInput.files[0];
-
-                // Tạo FormData object để chứa dữ liệu form
-                const formData = new FormData();
-                formData.append('roomType', roomtype);
-                formData.append('roomPrice', roomPrice);
-                formData.append('roomStatus', roomStatus);
-                formData.append('file-input', file);
-
+            async function updateRoomDetails(roomData) {
                 try {
-                    // Gọi API updateRoom
-                    const response = await fetch('https://newapihtbk-production.up.railway.app/api/room/' + window.roomId, {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const roomId = urlParams.get('roomId'); // Replace with your actual roomId
+
+                    const response = await fetch(`https://newapihtbk-production.up.railway.app/api/room/${roomId}`, {
                         method: 'PUT',
-                        body: formData,
+                        body: JSON.stringify(roomData),
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
                     });
 
-                    console.error('Error updating room:', response.status, response.statusText);
-                    const errorText = await response.text();
-                    console.log('Error details:', errorText);
-
-                   if (response.ok) {
-                        const updatedRoom = await response.json();
-                        console.log('Room updated:', updatedRoom);
-                        // Thực hiện các hành động khác nếu cần
-                    } else {
-                        console.error('Error updating room:', response.status, response.statusText);
+                    if (!response.ok) {
                         const errorText = await response.text();
-                        console.log('Error details:', errorText);
-                        // Xử lý lỗi nếu cần
+                        throw new Error(`Error: ${response.statusText} - ${errorText}`);
                     }
 
+                    const updatedRoom = await response.json();
+                    console.log('Room Updated:', updatedRoom);
+                    // Optionally, you can redirect to another page or update the UI as needed
                 } catch (error) {
-                    console.error('Error:', error.message);
-                    // Xử lý lỗi nếu cần
+                    console.error('Error updating room details:', error.message);
+                    // Handle error if needed
                 }
-            });
-        });
-    </script>
+            }
 
+            function getRoomDataFromForm() {
+                const roomData = {
+                    roomType: document.getElementById('roomType').value,
+                    roomPrice: document.getElementById('roomPrice').value,
+                    roomStatus: document.getElementById('roomStatus').value,
+                    // Add other fields as needed
+                };
+
+                return roomData;
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // Fetch and populate initial room details
+                const urlParams = new URLSearchParams(window.location.search);
+                const hotelId = urlParams.get('hotelId');
+                const roomId = urlParams.get('roomId');
+
+                console.log('Hotel ID:', hotelId);
+                console.log('Room ID:', roomId);
+
+                if (hotelId && roomId) {
+                    fetchHotelAndRoomDetails(hotelId, roomId);
+                }
+
+                // Update room details when the form is submitted
+                const updateForm = document.getElementById('updateForm');
+                updateForm.addEventListener('submit', function (event) {
+                    event.preventDefault(); // Prevent the default form submission
+                    const roomData = getRoomDataFromForm();
+                    updateRoomDetails(roomData);
+                });
+            });
+    </script>
+        
     <script>
         const fetchHotelAndRoomDetails = async (hotelId, roomId) => {
             try {
